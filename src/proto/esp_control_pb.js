@@ -10,9 +10,9 @@
 // GENERATED CODE -- DO NOT EDIT!
 /* eslint-disable */
 // @ts-nocheck
+
 import jspb from 'google-protobuf'
 var goog = jspb;
-
 var global = (function() {
   if (this) { return this; }
   if (typeof window !== 'undefined') { return window; }
@@ -20,9 +20,6 @@ var global = (function() {
   if (typeof self !== 'undefined') { return self; }
   return Function('return this')();
 }.call(null));
-
-var proto = global.proto || {}
-proto.esp = {}
 
 goog.exportSymbol('proto.esp.CameraOption', null, global);
 goog.exportSymbol('proto.esp.FrameSize', null, global);
@@ -546,27 +543,27 @@ proto.esp.UdpServerOption.prototype.setPort = function(value) {
  */
 proto.esp.FrameSize = {
   F_96X96: 0,
-  QQVGA: 1,
-  QCIF: 2,
-  HQVGA: 3,
+  QQVGA_160X120: 1,
+  QCIF_176X144: 2,
+  HQVGA_240X176: 3,
   F_240X240: 4,
-  QVGA: 5,
-  CIF: 6,
-  HVGA: 7,
-  VGA: 8,
-  SVGA: 9,
-  XGA: 10,
-  HD: 11,
-  SXGA: 12,
-  UXGA: 13,
-  FHD: 14,
-  P_HD: 15,
-  P_3MP: 16,
-  QXGA: 17,
-  QHD: 18,
-  WQXGA: 19,
-  P_FHD: 20,
-  QSXGA: 21,
+  QVGA_320X240: 5,
+  CIF_400X296: 6,
+  HVGA_480X320: 7,
+  VGA_640X480: 8,
+  SVGA_800X600: 9,
+  XGA_1024X768: 10,
+  HD_1280X720: 11,
+  SXGA_1280X1024: 12,
+  UXGA_1600X1200: 13,
+  FHD_1920X1080: 14,
+  P_HD_720X1280: 15,
+  P_3MP_864X1536: 16,
+  QXGA_2048X1536: 17,
+  QHD_2560X1440: 18,
+  WQXGA_2560X1600: 19,
+  P_FHD_1080X1920: 20,
+  QSXGA_2560X1920: 21,
   INVALID: 22
 };
 
@@ -595,5 +592,7 @@ proto.esp.WBMode = {
   OFFICE: 3,
   HOME: 4
 };
+const exports = {}
+goog.object.extend(exports, proto.esp);
 
-export default proto.esp;
+export default exports

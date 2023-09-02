@@ -26,12 +26,10 @@ const watchWidth = () => {
   if (Width <= mobileWidth) {
     collapsed.value = true;
   } else collapsed.value = false;
-
   checkMobileMode();
 };
-
+watchWidth();
 onMounted(() => {
-  checkMobileMode();
   window.addEventListener('resize', watchWidth);
 });
 onBeforeUnmount(()=>{

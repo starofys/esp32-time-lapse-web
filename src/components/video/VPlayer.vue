@@ -27,6 +27,10 @@ const doPlay = (url) => {
       url: url,
       type: 'auto'
     },
+    subtitle: {
+      url: url.replace(url.substring(url.lastIndexOf('.')),".vtt"),
+      type: 'webvtt'
+    },
     pluginOptions: {
       flv: {
         mediaDataSource: {

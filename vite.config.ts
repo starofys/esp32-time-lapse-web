@@ -23,6 +23,18 @@ export default defineConfig({
       '/video/':{
         target: 'https://pi.yysf.xin:8081/',
         changeOrigin: true,
+      },
+      '/api': {
+        target: 'http://jsonplaceholder.typicode.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/config': {
+        target: 'http://192.168.123.134:8080',
+        changeOrigin: true,
+        rewrite: (path) => {
+          return path.replace(/^\/config/, '');
+        },
       }
     }
   }
