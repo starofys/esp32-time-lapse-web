@@ -4,6 +4,6 @@
 
 [Esp32Cam Web Config UI](https://github.com/starofys/esp32-time-lapse-web)
 
-[Esp32Cam Web Config UI](https://github.com/starofys/esp32-time-lapse-web)
+[Esp32Cam Time Lapse](https://github.com/starofys/esp32-time-lapse)
 
 ![preview.png](assets%2Fpreview.png)
