@@ -100,11 +100,11 @@ proto.esp.CameraOption.prototype.toObject = function(opt_includeInstance) {
  */
 proto.esp.CameraOption.toObject = function(includeInstance, msg) {
   var f, obj = {
-    framesize: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    pixformat: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    wbmodel: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    jpegquality: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    freqmhz: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    frameSize: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    pixFormat: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    wbModel: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    jpegQuality: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    freqMhz: jspb.Message.getFieldWithDefault(msg, 5, 0),
     flag: jspb.Message.getFieldWithDefault(msg, 6, 0),
     sleep: jspb.Message.getFieldWithDefault(msg, 7, 0)
   };
@@ -145,23 +145,23 @@ proto.esp.CameraOption.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {!proto.esp.FrameSize} */ (reader.readEnum());
-      msg.setFramesize(value);
+      msg.setFrameSize(value);
       break;
     case 2:
       var value = /** @type {!proto.esp.PixFormat} */ (reader.readEnum());
-      msg.setPixformat(value);
+      msg.setPixFormat(value);
       break;
     case 3:
       var value = /** @type {!proto.esp.WBMode} */ (reader.readEnum());
-      msg.setWbmodel(value);
+      msg.setWbModel(value);
       break;
     case 4:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setJpegquality(value);
+      msg.setJpegQuality(value);
       break;
     case 5:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setFreqmhz(value);
+      msg.setFreqMhz(value);
       break;
     case 6:
       var value = /** @type {number} */ (reader.readInt32());
@@ -200,35 +200,35 @@ proto.esp.CameraOption.prototype.serializeBinary = function() {
  */
 proto.esp.CameraOption.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getFramesize();
+  f = message.getFrameSize();
   if (f !== 0.0) {
     writer.writeEnum(
       1,
       f
     );
   }
-  f = message.getPixformat();
+  f = message.getPixFormat();
   if (f !== 0.0) {
     writer.writeEnum(
       2,
       f
     );
   }
-  f = message.getWbmodel();
+  f = message.getWbModel();
   if (f !== 0.0) {
     writer.writeEnum(
       3,
       f
     );
   }
-  f = message.getJpegquality();
+  f = message.getJpegQuality();
   if (f !== 0) {
     writer.writeInt32(
       4,
       f
     );
   }
-  f = message.getFreqmhz();
+  f = message.getFreqMhz();
   if (f !== 0) {
     writer.writeInt32(
       5,
@@ -253,10 +253,10 @@ proto.esp.CameraOption.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional FrameSize frameSize = 1;
+ * optional FrameSize frame_size = 1;
  * @return {!proto.esp.FrameSize}
  */
-proto.esp.CameraOption.prototype.getFramesize = function() {
+proto.esp.CameraOption.prototype.getFrameSize = function() {
   return /** @type {!proto.esp.FrameSize} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -265,16 +265,16 @@ proto.esp.CameraOption.prototype.getFramesize = function() {
  * @param {!proto.esp.FrameSize} value
  * @return {!proto.esp.CameraOption} returns this
  */
-proto.esp.CameraOption.prototype.setFramesize = function(value) {
+proto.esp.CameraOption.prototype.setFrameSize = function(value) {
   return jspb.Message.setProto3EnumField(this, 1, value);
 };
 
 
 /**
- * optional PixFormat pixFormat = 2;
+ * optional PixFormat pix_format = 2;
  * @return {!proto.esp.PixFormat}
  */
-proto.esp.CameraOption.prototype.getPixformat = function() {
+proto.esp.CameraOption.prototype.getPixFormat = function() {
   return /** @type {!proto.esp.PixFormat} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -283,16 +283,16 @@ proto.esp.CameraOption.prototype.getPixformat = function() {
  * @param {!proto.esp.PixFormat} value
  * @return {!proto.esp.CameraOption} returns this
  */
-proto.esp.CameraOption.prototype.setPixformat = function(value) {
+proto.esp.CameraOption.prototype.setPixFormat = function(value) {
   return jspb.Message.setProto3EnumField(this, 2, value);
 };
 
 
 /**
- * optional WBMode wbModel = 3;
+ * optional WBMode wb_model = 3;
  * @return {!proto.esp.WBMode}
  */
-proto.esp.CameraOption.prototype.getWbmodel = function() {
+proto.esp.CameraOption.prototype.getWbModel = function() {
   return /** @type {!proto.esp.WBMode} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -301,16 +301,16 @@ proto.esp.CameraOption.prototype.getWbmodel = function() {
  * @param {!proto.esp.WBMode} value
  * @return {!proto.esp.CameraOption} returns this
  */
-proto.esp.CameraOption.prototype.setWbmodel = function(value) {
+proto.esp.CameraOption.prototype.setWbModel = function(value) {
   return jspb.Message.setProto3EnumField(this, 3, value);
 };
 
 
 /**
- * optional int32 jpegQuality = 4;
+ * optional int32 jpeg_quality = 4;
  * @return {number}
  */
-proto.esp.CameraOption.prototype.getJpegquality = function() {
+proto.esp.CameraOption.prototype.getJpegQuality = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
@@ -319,16 +319,16 @@ proto.esp.CameraOption.prototype.getJpegquality = function() {
  * @param {number} value
  * @return {!proto.esp.CameraOption} returns this
  */
-proto.esp.CameraOption.prototype.setJpegquality = function(value) {
+proto.esp.CameraOption.prototype.setJpegQuality = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
 /**
- * optional int32 freqMHz = 5;
+ * optional int32 freq_mhz = 5;
  * @return {number}
  */
-proto.esp.CameraOption.prototype.getFreqmhz = function() {
+proto.esp.CameraOption.prototype.getFreqMhz = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
@@ -337,7 +337,7 @@ proto.esp.CameraOption.prototype.getFreqmhz = function() {
  * @param {number} value
  * @return {!proto.esp.CameraOption} returns this
  */
-proto.esp.CameraOption.prototype.setFreqmhz = function(value) {
+proto.esp.CameraOption.prototype.setFreqMhz = function(value) {
   return jspb.Message.setProto3IntField(this, 5, value);
 };
 
@@ -594,5 +594,4 @@ proto.esp.WBMode = {
 };
 const exports = {}
 goog.object.extend(exports, proto.esp);
-
 export default exports

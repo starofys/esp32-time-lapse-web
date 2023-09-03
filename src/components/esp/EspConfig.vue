@@ -1,6 +1,7 @@
 <script setup>
 import {ref, unref} from "vue";
-import {NForm,NFormItem,NInput,NInputNumber,NButton} from 'naive-ui'
+import {NForm,NFormItem,NInput,NInputNumber,NButton, useMessage} from 'naive-ui'
+
 const formServer = ref()
 const formCamera = ref()
 const udpServer = ref({
@@ -13,10 +14,14 @@ const cameraIp = ref({
 const cameraOption = ref({
   frameSize: Esp.FrameSize.HD_1280X720,
   pixFormat: Esp.PixFormat.JPEG,
-  wbModel: '',
-  jpegQuality: 4,
-  freqMHz: 20,
-  sleep: 5
+  wbModel: Esp.WBMode.AUTO,
+  jpegQuality: 2,
+  freqMhz: 10,
+  sleep: 5,
+  autoLight: false,
+  light: false,
+  hFlip: false,
+  vFlip: false,
 })
 
 const udpServerRule = {
@@ -47,7 +52,7 @@ const cameraRule = {
   },
 }
 
-const doAction = (e,form,cls,model,filename) => {
+const doAction = (e,form,cls,model,filename,cb,action) => {
   e.preventDefault()
   form.value.validate((errors)=>{
     if (!errors) {
@@ -55,42 +60,90 @@ const doAction = (e,form,cls,model,filename) => {
       const val = unref(model)
       for(const k in val) {
         const fnName = 'set' + k.substring(0,1).toUpperCase() + k.substring(1)
+        console.log(fnName)
         if (option[fnName]) {
           option[fnName](val[k])
         }
       }
-      console.log(option.toObject())
-      console.log(cameraIp.value.ip)
+      if (cb) cb(option)
+      console.log(option,option.toObject())
       // pb.post('http://' + cameraIp.value.ip + '/edit').then(console.log);
       const data = new FormData()
       data.append('file',new Blob([option.serializeBinary()],{
       }),filename)
-      http.post( '/config/edit',data,{
-      }).then(console.log)
+      if (action === 'upload') {
+        http.post( 'http://' + cameraIp.value.ip + '/edit',data,{
+        }).then(()=> {
+          message.success('上传成功')
+        })
+      }
     }
   });
 }
+const message = useMessage();
 const handleServerClick = (e) => {
-  doAction(e,formServer,Esp.UdpServerOption,udpServer,'/config_udp_server.pb')
+  doAction(e,formServer,Esp.UdpServerOption,udpServer,'/config_udp_server.pb',undefined,'upload')
 }
-const handleServerUpload = ()=> {
-
-}
-const handleCameraClick = (e) => {
-  e.preventDefault()
-  formCamera.value.validate((errors)=>{
-    console.log(errors)
-    if (!errors) {
-
+const handleCameraClick = (e)=> {
+  doAction(e,formCamera,Esp.CameraOption,cameraOption,'/config_camera.pb',(option)=>{
+    let flag = 0;
+    if (cameraOption.value.hFlip) {
+      flag |= 1;
     }
-  });
-}
+    if (cameraOption.value.vFlip) {
+      flag |= 1 << 1;
+    }
+    if (cameraOption.value.light) {
+      flag |= 1 << 2;
+    }
+    if (cameraOption.value.autoLight) {
+      flag |= 1 << 3;
+    }
+    option.setFlag(flag);
 
+  },'upload')
+}
+const getBaseIp = ()=> {
+  return 'http://' + cameraIp.value.ip;
+}
+const getConfig = (file,cls)=> {
+  const base = getBaseIp()
+  return pb.get(base+file).then(rs=>{
+    const obj = cls.deserializeBinary(new Uint8Array(rs.data))
+    return obj.toObject();
+  })
+}
+const loadConfig = ()=> {
+  getConfig('/config_udp_server.pb',Esp.UdpServerOption)
+      .then(rs => {
+        udpServer.value = rs
+      });
+  getConfig('/config_camera.pb',Esp.CameraOption)
+      .then(rs => {
+        cameraOption.value = rs
+        const flag = rs.flag
+        let i=0;
+        cameraOption.value.hFlip = !!(flag & 1 << i++);
+        cameraOption.value.vFlip = !!(flag & 1 << i++);
+        cameraOption.value.light = !!(flag & 1 << i++);
+        cameraOption.value.autoLight = !!(flag & 1 << i++);
+      })
+}
+const reloadConfig = ()=> {
+  const base = getBaseIp()
+  http.get(base+'/reload').then(rs=> {
+    message.success('重载成功')
+  })
+}
 </script>
 <template>
 
   <n-card title="相机ip地址">
-    <n-input placeholder="camera ip地址" v-model:value="cameraIp.ip"></n-input>
+    <n-space vertical>
+      <n-input placeholder="camera ip地址" v-model:value="cameraIp.ip"></n-input>
+      <n-button @click="loadConfig">加载</n-button>
+      <n-button @click="reloadConfig">重载配置</n-button>
+    </n-space>
   </n-card>
 
   <n-card title="服务器配置">
@@ -109,9 +162,6 @@ const handleCameraClick = (e) => {
       <n-form-item>
         <n-space>
           <n-button attr-type="button" @click="handleServerClick">
-            到出文件
-          </n-button>
-          <n-button attr-type="button" @click="handleServerUpload">
             上传
           </n-button>
         </n-space>
@@ -128,12 +178,27 @@ const handleCameraClick = (e) => {
       <n-form-item label="分辨率" path="frameSize">
         <n-select v-model:value="cameraOption.frameSize" :options="frameSizeOpt" />
       </n-form-item>
-      <n-form-item label="格式" path="pixFormat">
-        <n-select v-model:value="cameraOption.pixFormat" :options="pixFormatOpt" />
+      <n-form-item label="白平衡">
+        <n-select v-model:value="cameraOption.wbModel" :options="wbModeOpt" />
+      </n-form-item>
+      <n-form-item label="间隔时间">
+        <n-input-number :min="5" v-model:value="cameraOption.sleep" />
+      </n-form-item>
+      <n-form-item label="闪光灯">
+        <n-switch v-model:value="cameraOption.light" />
+      </n-form-item>
+      <n-form-item label="自动闪光灯">
+        <n-switch v-model:value="cameraOption.autoLight" />
+      </n-form-item>
+      <n-form-item label="水平翻转">
+        <n-switch v-model:value="cameraOption.hFlip" />
+      </n-form-item>
+      <n-form-item label="垂直翻转">
+        <n-switch v-model:value="cameraOption.vFlip" />
       </n-form-item>
       <n-form-item>
         <n-button attr-type="button" @click="handleCameraClick">
-          到出文件
+          上传
         </n-button>
       </n-form-item>
     </n-form>
@@ -149,7 +214,7 @@ export default {
   data (){
     return {
       frameSizeOpt: buildOptions(Esp.FrameSize),
-      pixFormatOpt: buildOptions(Esp.PixFormat)
+      wbModeOpt: buildOptions(Esp.WBMode)
     }
   }
 }

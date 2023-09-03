@@ -38,10 +38,10 @@ const columns = [
   }
 ]
 const loadVideoList = () => {
-  console.log('loadVideoList')
   http.get('/video/').then(rs => {
     const reg = /"\d{8}_\d{2}_\d{2}_\d{2}\..{3}/g
     videoList.value = rs.data.match(reg)
+        .filter(s => !s.endsWith('vtt'))
         .map(s => {
           const date = s.substring(1, 5)
               + '-' + s.substring(5, 7)

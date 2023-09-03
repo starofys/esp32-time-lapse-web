@@ -46,11 +46,11 @@ enum WBMode {
     Home = 4;
 }
 message CameraOption {
-    FrameSize frameSize = 1;
-    PixFormat pixFormat = 2;
-    WBMode    wbModel = 3;
-    int32 jpegQuality = 4;
-    int32 freqMHz = 5;
+    FrameSize frame_size = 1;
+    PixFormat pix_format = 2;
+    WBMode    wb_model = 3;
+    int32 jpeg_quality = 4;
+    int32 freq_mhz = 5;
     int32 flag = 6;
     int32 sleep = 7;
 }

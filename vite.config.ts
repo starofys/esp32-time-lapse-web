@@ -29,11 +29,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
-      '/config': {
-        target: 'http://192.168.123.134:8080',
+      '/esp': {
+        target: 'http://192.168.123.12:8080',
         changeOrigin: true,
         rewrite: (path) => {
-          return path.replace(/^\/config/, '');
+          return path.replace(/^\/esp/, '');
         },
       }
     }

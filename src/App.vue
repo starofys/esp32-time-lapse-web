@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {dateZhCN, NConfigProvider, zhCN, NTabs, NTabPane, NMenu, NSpace,
-  MenuOption,NNotificationProvider} from 'naive-ui'
+  MenuOption,NNotificationProvider,NMessageProvider} from 'naive-ui'
 import {onBeforeUnmount, onMounted, ref, unref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import Notify from './components/Notify.vue'
@@ -50,7 +50,9 @@ const onMenuClick = (key: string,item: MenuOption) => {
              :value="r.path" :on-update-value="onMenuClick"/>
     </n-space>
     <n-notification-provider>
-      <router-view></router-view>
+      <n-message-provider>
+        <router-view></router-view>
+      </n-message-provider>
       <Notify/>
     </n-notification-provider>
   </n-config-provider>
