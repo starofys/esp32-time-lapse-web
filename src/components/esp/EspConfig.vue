@@ -196,8 +196,8 @@ const reloadConfig = ()=> {
       </n-form-item>
       <n-form-item>
         <n-space>
-          <n-button attr-type="button" @click="handleServerClick" data-action="upload">上传</n-button>
-          <n-button attr-type="button" @click="(e)=>handleServerClick(e,'save')" data-action="save">保存</n-button>
+          <n-button attr-type="button" @click="handleWifiClick" data-action="upload">上传</n-button>
+          <n-button attr-type="button" @click="(e)=>handleWifiClick(e,'save')" data-action="save">保存</n-button>
         </n-space>
       </n-form-item>
     </n-form>
