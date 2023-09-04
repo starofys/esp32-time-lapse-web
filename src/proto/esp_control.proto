@@ -58,3 +58,8 @@ message UdpServerOption {
     string ip = 2;
     int32 port = 1;
 }
+
+message WifiOption {
+    string ssid = 2;
+    string password = 1;
+}

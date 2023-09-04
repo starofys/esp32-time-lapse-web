@@ -8,8 +8,12 @@ const udpServer = ref({
   ip: '192.168.123.166',
   port: 8080,
 })
+const wifiOption = ref({
+  ssid: 'LEDE',
+  password: '',
+})
 const cameraIp = ref({
-  ip: '192.168.123.12:8080',
+  ip: 'http://192.168.123.134:8080',
 })
 const cameraOption = ref({
   frameSize: Esp.FrameSize.HD_1280X720,
@@ -23,7 +27,13 @@ const cameraOption = ref({
   hFlip: false,
   vFlip: false,
 })
-
+const wifiOptionRule = {
+  ssid: {
+    required: true,
+    message: '请输入ssid',
+    trigger: 'blur'
+  }
+}
 const udpServerRule = {
   ip: {
     required: true,
@@ -69,22 +79,40 @@ const doAction = (e,form,cls,model,filename,cb,action) => {
       console.log(option,option.toObject())
       // pb.post('http://' + cameraIp.value.ip + '/edit').then(console.log);
       const data = new FormData()
-      data.append('file',new Blob([option.serializeBinary()],{
-      }),filename)
-      if (action === 'upload') {
-        http.post( 'http://' + cameraIp.value.ip + '/edit',data,{
+      const blob = new Blob([option.serializeBinary()],{
+      })
+      data.append('file',blob,filename)
+      if (!action || action === 'upload') {
+        http.post( cameraIp.value.ip + '/edit',data,{
         }).then(()=> {
           message.success('上传成功')
         })
+      } else if (action === 'save') {
+        const pickerOptions = {
+          suggestedName: filename.substring(1),
+          types: [
+            {
+              description: 'application/x-protobuf',
+              accept: {
+                '*/*': ['.pb'],
+              },
+            },
+          ],
+        };
+        //window.showSaveFilePicker(pickerOptions)
+        // const writableFileStream = await fileHandle.createWritable();
+        // await writableFileStream.write(taBlob);
+        // await writableFileStream.close();
+
       }
     }
   });
 }
 const message = useMessage();
-const handleServerClick = (e) => {
-  doAction(e,formServer,Esp.UdpServerOption,udpServer,'/config_udp_server.pb',undefined,'upload')
+const handleServerClick = (e,action) => {
+  doAction(e,formServer,Esp.UdpServerOption,udpServer,'/config_udp_server.pb',undefined,action)
 }
-const handleCameraClick = (e)=> {
+const handleCameraClick = (e,action)=> {
   doAction(e,formCamera,Esp.CameraOption,cameraOption,'/config_camera.pb',(option)=>{
     let flag = 0;
     if (cameraOption.value.hFlip) {
@@ -101,10 +129,10 @@ const handleCameraClick = (e)=> {
     }
     option.setFlag(flag);
 
-  },'upload')
+  },action)
 }
 const getBaseIp = ()=> {
-  return 'http://' + cameraIp.value.ip;
+  return cameraIp.value.ip;
 }
 const getConfig = (file,cls)=> {
   const base = getBaseIp()
@@ -118,6 +146,10 @@ const loadConfig = ()=> {
       .then(rs => {
         udpServer.value = rs
       });
+  getConfig('/config_wifi.pb',Esp.UdpServerOption)
+      .then(rs => {
+        wifiOption.value = rs
+      });
   getConfig('/config_camera.pb',Esp.CameraOption)
       .then(rs => {
         cameraOption.value = rs
@@ -129,6 +161,9 @@ const loadConfig = ()=> {
         cameraOption.value.autoLight = !!(flag & 1 << i++);
       })
 }
+const handleWifiClick = (e,action) => {
+  doAction(e,formServer,Esp.WifiOption,wifiOption,'/config_wifi.pb',undefined,action)
+}
 const reloadConfig = ()=> {
   const base = getBaseIp()
   http.get(base+'/reload').then(rs=> {
@@ -138,7 +173,7 @@ const reloadConfig = ()=> {
 </script>
 <template>
 
-  <n-card title="相机ip地址">
+  <n-card title="相机url地址">
     <n-space vertical>
       <n-input placeholder="camera ip地址" v-model:value="cameraIp.ip"></n-input>
       <n-button @click="loadConfig">加载</n-button>
@@ -161,12 +196,33 @@ const reloadConfig = ()=> {
       </n-form-item>
       <n-form-item>
         <n-space>
-          <n-button attr-type="button" @click="handleServerClick">
-            上传
-          </n-button>
+          <n-button attr-type="button" @click="handleServerClick" data-action="upload">上传</n-button>
+          <n-button attr-type="button" @click="(e)=>handleServerClick(e,'save')" data-action="save">保存</n-button>
         </n-space>
       </n-form-item>
     </n-form>
+
+    <n-form
+        ref="formServer"
+        :label-width="80"
+        :model="wifiOption"
+        :rules="wifiOptionRule"
+    >
+      <n-form-item label="WIFI名称" path="ssid">
+        <n-input v-model:value="wifiOption.ssid" placeholder="WIFI名称" />
+      </n-form-item>
+      <n-form-item label="密码">
+        <n-input type="password" v-model:value="wifiOption.password" placeholder="密码" />
+      </n-form-item>
+
+      <n-form-item>
+        <n-space>
+          <n-button attr-type="button" @click="handleServerClick" data-action="upload">上传</n-button>
+          <n-button attr-type="button" @click="(e)=>handleServerClick(e,'save')" data-action="save">保存</n-button>
+        </n-space>
+      </n-form-item>
+    </n-form>
+
   </n-card>
   <n-card title="相机配置">
     <n-form
@@ -197,9 +253,8 @@ const reloadConfig = ()=> {
         <n-switch v-model:value="cameraOption.vFlip" />
       </n-form-item>
       <n-form-item>
-        <n-button attr-type="button" @click="handleCameraClick">
-          上传
-        </n-button>
+        <n-button attr-type="button" @click="handleCameraClick" data-action="upload">上传</n-button>
+        <n-button attr-type="button" @click="(e) => handleCameraClick(e,'save') ">保存</n-button>
       </n-form-item>
     </n-form>
   </n-card>
