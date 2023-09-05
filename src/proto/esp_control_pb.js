@@ -622,8 +622,8 @@ proto.esp.WifiOption.prototype.toObject = function(opt_includeInstance) {
  */
 proto.esp.WifiOption.toObject = function(includeInstance, msg) {
   var f, obj = {
-    ssid: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    password: jspb.Message.getFieldWithDefault(msg, 1, "")
+    ssid: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    password: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -660,11 +660,11 @@ proto.esp.WifiOption.deserializeBinaryFromReader = function(msg, reader) {
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 2:
+    case 1:
       var value = /** @type {string} */ (reader.readString());
       msg.setSsid(value);
       break;
-    case 1:
+    case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setPassword(value);
       break;
@@ -700,14 +700,14 @@ proto.esp.WifiOption.serializeBinaryToWriter = function(message, writer) {
   f = message.getSsid();
   if (f.length > 0) {
     writer.writeString(
-      2,
+      1,
       f
     );
   }
   f = message.getPassword();
   if (f.length > 0) {
     writer.writeString(
-      1,
+      2,
       f
     );
   }
@@ -715,28 +715,10 @@ proto.esp.WifiOption.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional string ssid = 2;
+ * optional string ssid = 1;
  * @return {string}
  */
 proto.esp.WifiOption.prototype.getSsid = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.esp.WifiOption} returns this
- */
-proto.esp.WifiOption.prototype.setSsid = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
-};
-
-
-/**
- * optional string password = 1;
- * @return {string}
- */
-proto.esp.WifiOption.prototype.getPassword = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -745,8 +727,26 @@ proto.esp.WifiOption.prototype.getPassword = function() {
  * @param {string} value
  * @return {!proto.esp.WifiOption} returns this
  */
-proto.esp.WifiOption.prototype.setPassword = function(value) {
+proto.esp.WifiOption.prototype.setSsid = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string password = 2;
+ * @return {string}
+ */
+proto.esp.WifiOption.prototype.getPassword = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.esp.WifiOption} returns this
+ */
+proto.esp.WifiOption.prototype.setPassword = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
