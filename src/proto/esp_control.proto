@@ -53,6 +53,7 @@ message CameraOption {
     int32 freq_mhz = 5;
     int32 flag = 6;
     int32 sleep = 7;
+    int32 brightness = 8;
 }
 message UdpServerOption {
     string ip = 2;

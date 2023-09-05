@@ -1,12 +1,16 @@
 <script setup>
 import {ref, unref} from "vue";
-import {NForm,NFormItem,NInput,NInputNumber,NButton, useMessage} from 'naive-ui'
+import {NCollapse,NCollapseItem,NDivider,NGrid,NFormItemGi,NImage,NSlider, useMessage} from 'naive-ui'
 
 const formServer = ref()
 const formCamera = ref()
 const udpServer = ref({
   ip: '192.168.123.166',
   port: 8080,
+})
+const imageUrl = ref({
+  show: false,
+  url: ''
 })
 const wifiOption = ref({
   ssid: 'LEDE',
@@ -22,6 +26,7 @@ const cameraOption = ref({
   jpegQuality: 2,
   freqMhz: 10,
   sleep: 5,
+  brightness: 100,
   autoLight: false,
   light: false,
   hFlip: false,
@@ -164,70 +169,96 @@ const loadConfig = ()=> {
 const handleWifiClick = (e,action) => {
   doAction(e,formServer,Esp.WifiOption,wifiOption,'/config_wifi.pb',undefined,action)
 }
+const reboot = ()=> {
+  http.get(getBaseIp()+'/reboot').then(rs=> {
+    message.success('重启成功')
+  })
+}
 const reloadConfig = ()=> {
   const base = getBaseIp()
   http.get(base+'/reload').then(rs=> {
     message.success('重载成功')
   })
 }
+const preview = ()=> {
+  imageUrl.value.show = !imageUrl.value.show;
+  if (imageUrl.value.show) {
+    imageUrl.value.url = cameraIp.value.ip+'/capture'
+  }
+}
 </script>
 <template>
-
   <n-card title="相机url地址">
     <n-space vertical>
       <n-input placeholder="camera ip地址" v-model:value="cameraIp.ip"></n-input>
-      <n-button @click="loadConfig">加载</n-button>
-      <n-button @click="reloadConfig">重载配置</n-button>
+      <n-space>
+        <n-button @click="loadConfig">加载</n-button>
+        <n-button @click="reloadConfig">重载配置</n-button>
+        <n-button @click="reboot">重启</n-button>
+        <n-button @click="preview">预览图片</n-button>
+      </n-space>
+      <n-image v-if="imageUrl.show"
+               width="400"
+          :src="imageUrl.url"
+      />
+      <n-divider />
+      <n-collapse>
+        <n-collapse-item title="WIFI配置" name="1">
+          <n-form
+              ref="formServer"
+              label-placement="left"
+              label-width="120"
+              :model="wifiOption"
+              :rules="wifiOptionRule"
+          >
+            <n-form-item label="WIFI名称" path="ssid">
+              <n-input v-model:value="wifiOption.ssid" placeholder="WIFI名称" />
+            </n-form-item>
+            <n-form-item label="密码">
+              <n-input type="password" v-model:value="wifiOption.password" placeholder="密码" />
+            </n-form-item>
+
+            <n-form-item>
+              <n-space>
+                <n-button attr-type="button" @click="handleWifiClick" data-action="upload">上传</n-button>
+                <n-button attr-type="button" @click="(e)=>handleWifiClick(e,'save')" data-action="save">保存</n-button>
+              </n-space>
+            </n-form-item>
+          </n-form>
+        </n-collapse-item>
+        <n-collapse-item title="服务器配置" name="2">
+          <n-form
+              ref="formServer"
+              label-placement="left"
+              label-width="120"
+              :model="udpServer"
+              :rules="udpServerRule"
+          >
+            <n-form-item label="服务端ip" path="ip">
+              <n-input v-model:value="udpServer.ip" placeholder="服务端ip" />
+            </n-form-item>
+            <n-form-item label="端口" path="port1">
+              <n-input-number v-model:value="udpServer.port" placeholder="端口" />
+            </n-form-item>
+            <n-form-item>
+              <n-space>
+                <n-button attr-type="button" @click="handleServerClick" data-action="upload">上传</n-button>
+                <n-button attr-type="button" @click="(e)=>handleServerClick(e,'save')" data-action="save">保存</n-button>
+
+              </n-space>
+            </n-form-item>
+          </n-form>
+        </n-collapse-item>
+      </n-collapse>
     </n-space>
   </n-card>
 
-  <n-card title="服务器配置">
-    <n-form
-        ref="formServer"
-        :label-width="80"
-        :model="udpServer"
-        :rules="udpServerRule"
-    >
-      <n-form-item label="服务端ip" path="ip">
-        <n-input v-model:value="udpServer.ip" placeholder="服务端ip" />
-      </n-form-item>
-      <n-form-item label="端口" path="port1">
-        <n-input-number v-model:value="udpServer.port" placeholder="端口" />
-      </n-form-item>
-      <n-form-item>
-        <n-space>
-          <n-button attr-type="button" @click="handleWifiClick" data-action="upload">上传</n-button>
-          <n-button attr-type="button" @click="(e)=>handleWifiClick(e,'save')" data-action="save">保存</n-button>
-        </n-space>
-      </n-form-item>
-    </n-form>
 
-    <n-form
-        ref="formServer"
-        :label-width="80"
-        :model="wifiOption"
-        :rules="wifiOptionRule"
-    >
-      <n-form-item label="WIFI名称" path="ssid">
-        <n-input v-model:value="wifiOption.ssid" placeholder="WIFI名称" />
-      </n-form-item>
-      <n-form-item label="密码">
-        <n-input type="password" v-model:value="wifiOption.password" placeholder="密码" />
-      </n-form-item>
-
-      <n-form-item>
-        <n-space>
-          <n-button attr-type="button" @click="handleServerClick" data-action="upload">上传</n-button>
-          <n-button attr-type="button" @click="(e)=>handleServerClick(e,'save')" data-action="save">保存</n-button>
-        </n-space>
-      </n-form-item>
-    </n-form>
-
-  </n-card>
   <n-card title="相机配置">
     <n-form
+        label-placement="left"
+        label-width="120"
         ref="formCamera"
-        :label-width="80"
         :model="cameraOption"
         :rules="cameraRule"
     >
@@ -240,21 +271,33 @@ const reloadConfig = ()=> {
       <n-form-item label="间隔时间">
         <n-input-number :min="5" v-model:value="cameraOption.sleep" />
       </n-form-item>
-      <n-form-item label="闪光灯">
-        <n-switch v-model:value="cameraOption.light" />
+      <n-form-item label="时钟">
+        <n-input-number :min="1" :max="35" v-model:value="cameraOption.freqMhz" />
       </n-form-item>
-      <n-form-item label="自动闪光灯">
-        <n-switch v-model:value="cameraOption.autoLight" />
+      <n-form-item label="闪光灯亮度">
+        <n-slider v-model:value="cameraOption.brightness" :min="0" :max="250" :step="1" />
       </n-form-item>
-      <n-form-item label="水平翻转">
-        <n-switch v-model:value="cameraOption.hFlip" />
-      </n-form-item>
-      <n-form-item label="垂直翻转">
-        <n-switch v-model:value="cameraOption.vFlip" />
-      </n-form-item>
+      <n-grid :cols="24" :x-gap="24">
+        <n-form-item-gi :span="8" label="闪光灯">
+          <n-switch v-model:value="cameraOption.light" />
+        </n-form-item-gi>
+        <n-form-item-gi :span="8" label="自动">
+          <n-switch v-model:value="cameraOption.autoLight" />
+        </n-form-item-gi>
+      </n-grid>
+      <n-grid :cols="24" :x-gap="24">
+        <n-form-item-gi :span="6" label="水平翻转">
+          <n-switch v-model:value="cameraOption.hFlip" />
+        </n-form-item-gi>
+        <n-form-item-gi :span="6" label="垂直翻转">
+          <n-switch v-model:value="cameraOption.vFlip" />
+        </n-form-item-gi>
+      </n-grid>
       <n-form-item>
-        <n-button attr-type="button" @click="handleCameraClick" data-action="upload">上传</n-button>
-        <n-button attr-type="button" @click="(e) => handleCameraClick(e,'save') ">保存</n-button>
+        <n-space>
+          <n-button attr-type="button" @click="handleCameraClick" data-action="upload">上传</n-button>
+          <n-button attr-type="button" @click="(e) => handleCameraClick(e,'save') ">保存</n-button>
+        </n-space>
       </n-form-item>
     </n-form>
   </n-card>

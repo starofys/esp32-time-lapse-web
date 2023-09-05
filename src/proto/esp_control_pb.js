@@ -128,7 +128,8 @@ proto.esp.CameraOption.toObject = function(includeInstance, msg) {
     jpegQuality: jspb.Message.getFieldWithDefault(msg, 4, 0),
     freqMhz: jspb.Message.getFieldWithDefault(msg, 5, 0),
     flag: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    sleep: jspb.Message.getFieldWithDefault(msg, 7, 0)
+    sleep: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    brightness: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -192,6 +193,10 @@ proto.esp.CameraOption.deserializeBinaryFromReader = function(msg, reader) {
     case 7:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setSleep(value);
+      break;
+    case 8:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setBrightness(value);
       break;
     default:
       reader.skipField();
@@ -268,6 +273,13 @@ proto.esp.CameraOption.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0) {
     writer.writeInt32(
       7,
+      f
+    );
+  }
+  f = message.getBrightness();
+  if (f !== 0) {
+    writer.writeInt32(
+      8,
       f
     );
   }
@@ -397,6 +409,24 @@ proto.esp.CameraOption.prototype.getSleep = function() {
  */
 proto.esp.CameraOption.prototype.setSleep = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
+};
+
+
+/**
+ * optional int32 brightness = 8;
+ * @return {number}
+ */
+proto.esp.CameraOption.prototype.getBrightness = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.esp.CameraOption} returns this
+ */
+proto.esp.CameraOption.prototype.setBrightness = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 
